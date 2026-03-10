@@ -4,7 +4,7 @@ from pathlib import Path
 
 # ================= 配置区域 =================
 INPUT_DIR = "input_aac"
-OUTPUT_DIR = "noa" 
+OUTPUT_DIR = "output_aac" 
 
 # 想要增加的分贝数
 VOLUME_GAIN = "10dB" 
