@@ -120,10 +120,10 @@ python 语音增强/boost_volume.py
 
 #### 3.2 受击语音（wwise）
 
-在 `audio/wwise/events/player/play_xxx/<角色代号>/` 对应目录中放好受击音频后，执行：
+在 `audio/wwise/events/player/play_xxx/<角色代号>/` 对应目录中放好受击音频后并且将语音增强文件夹下的rename_audio.py放到该目录，在这个目录下执行：
 
 ```powershell
-python 语音增强/rename_audio.py
+python rename_audio.py
 ```
 
 脚本支持两种模式：
