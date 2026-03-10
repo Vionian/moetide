@@ -276,7 +276,7 @@
                 <span id="globalStats" class="subtle">等待配置...</span>
             </div>
             <div class="header-actions">
-                <button class="btn btn-warning" onclick="exportPendingTasks()" title="导出所有未完成的台词到TXT文件">📝 导出待处理清单</button>
+                <button class="btn btn-warning" onclick="exportPendingTasks()" title="仅导出 ja_ / en_ 前缀中未完成的台词到TXT文件">📝 导出待处理清单</button>
                 <button class="btn btn-purple" id="btnScan" onclick="scanDirectory()" disabled>🔄 智能扫描与匹配</button>
             </div>
         </div>
@@ -327,11 +327,8 @@
                 </div>
                 <div style="flex:1">
                     <label class="label-target">目标语言 (Target Lang)</label>
-                    <select id="textLang" class="input-control">
-                        <option value="ja">日语 (ja)</option>
-                        <option value="zh">中文 (zh)</option>
-                        <option value="en">英语 (en)</option>
-                        <option value="auto">自动识别 (auto)</option>
+                    <select id="textLang" class="input-control" disabled>
+                        <option value="auto">自动按前缀判定 (ja_/loc_/en_)</option>
                     </select>
                 </div>
                 <div style="flex:1">
@@ -362,7 +359,7 @@
             <div class="input-group" style="margin-top: 20px;">
                  <div class="file-drop-zone success-zone" style="min-height: 80px;">
                     <strong>📥 3. 导入翻译 TXT (自动匹配)</strong>
-                    <small>系统会自动读取 txt 内容，根据组名和待处理台词填入翻译</small>
+                    <small>系统会自动读取 txt 内容，仅匹配 ja_ 与 en_ 前缀组的待处理台词并填入翻译</small>
                     <input type="file" accept=".txt" onchange="handleTxtImport(this)">
                 </div>
             </div>
@@ -385,11 +382,11 @@
         const keys = ['apiUrl', 'gptModelPath', 'sovitsModelPath', 'refPath', 'promptText', 'promptLang', 'textLang', 'mediaType'];
         keys.forEach(key => {
             const val = localStorage.getItem(key);
-            // 如果有保存的值就赋值，如果没有且是 textLang，默认为日语(ja)以保持兼容
-            if(val) {
+            if (key === 'textLang') {
+                document.getElementById(key).value = 'auto';
+                localStorage.setItem('textLang', 'auto');
+            } else if (val) {
                 document.getElementById(key).value = val;
-            } else if (key === 'textLang') {
-                document.getElementById(key).value = 'ja'; 
             }
             
             // 绑定事件，改变时保存到本地存储
@@ -494,7 +491,7 @@
 
             const foundGroup = groups.find(g => g.name === line);
             if (foundGroup) {
-                currentGroupName = line;
+                currentGroupName = isJaOrEnPrefix(line) ? line : null;
                 continue;
             }
 
@@ -503,6 +500,7 @@
             if (currentGroupName) {
                 const original = line;
                 const group = groups.find(g => g.name === currentGroupName);
+                if (!group) continue;
                 const task = group.tasks.find(t => t.originalText === original);
 
                 if (task) {
@@ -644,6 +642,19 @@
         return (longer.length - editDistance(longer, shorter)) / parseFloat(longer.length);
     }
 
+    function isJaOrEnPrefix(name) {
+        const lower = (name || '').toLowerCase();
+        return lower.startsWith('ja_') || lower.startsWith('en_');
+    }
+
+    function detectTextLangByPrefix(name) {
+        const lower = (name || '').toLowerCase();
+        if (lower.startsWith('ja_')) return 'ja';
+        if (lower.startsWith('loc_')) return 'zh';
+        if (lower.startsWith('en_')) return 'en';
+        return 'ja';
+    }
+
     async function scanDirectory() {
         if (!dirHandle) return;
         const mediaType = document.getElementById('mediaType').value;
@@ -722,6 +733,7 @@
         if (groups.length === 0) return alert("请先导入 Lua 配置！");
         let content = ""; let pendingTotal = 0;
         for (const group of groups) {
+            if (!isJaOrEnPrefix(group.name)) continue;
             const pendingTasks = group.tasks.filter(t => t.status !== 'done');
             if (pendingTasks.length > 0) {
                 content += `${group.name}\n待处理台词\n`;
@@ -836,7 +848,7 @@
         const refPath = document.getElementById('refPath').value;
         
         // 【修改点1】：获取用户选择的目标语言
-        const targetLang = document.getElementById('textLang').value || "ja"; 
+        const targetLang = detectTextLangByPrefix(task.fileName);
 
         if(!refPath) throw new Error("参考音频路径不能为空！");
 
