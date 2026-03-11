@@ -140,6 +140,10 @@ python mod_builder_ui.py
 - 智能扫描与匹配
 - 批量导出
 
+### 5.4 原台词使用
+
+如果你想使用你创建角色的原台词，请准备好其对应的台词语音aac格式文件，命名规则为原台词.aac，将其放入`audio/loc_xxx/<角色代号>/`目录下。然后你需要先修改`<角色代号>.lua`里的台词，将其中的一些台词替换为该角色的原台词后再重新打开tts_tool.html，导入修改后的`<角色代号>.lua`后点击右上角的智能扫描与匹配，系统会自动匹配原台词并且对其重命名
+
 ---
 
 ## 6. 翻译 TXT 格式（用于 ja/en）
@@ -180,7 +184,7 @@ python boost_volume.py
 
 `audio/wwise/events/player/play_xxx/<角色代号>/`
 
-放入受击音频后并且将语音增强文件夹下的rename_audio.py放到该目录，在这个目录下执行，执行完毕后根据终端对lua代码里的对应部分进行修改：
+放入受击音频后并且将语音增强文件夹下的`rename_audio.py`放到该目录，在这个目录下执行，执行完毕后根据终端对lua代码里的对应部分进行修改：
 
 ```powershell
 python rename_audio.py
@@ -225,7 +229,7 @@ python rename_audio.py
 - `audio/wwise/events/player/play_xxx/<角色代号>/`：角色的受击音效
 - `cartoon_preview/<职业>/<角色代号>/`：角色的头像图片，一共13张
 
-将audio和cartoon_preview文件夹复制粘贴到EBuyToDeep文件夹下，然后将<角色代号>.lua里面的代码复制填写到E_config.lua代码里即可
+将`audio`和`cartoon_preview`文件夹复制粘贴到`EBuyToDeep`文件夹下，然后将`<角色代号>.lua`里面的代码复制填写到`E_config.lua`代码里即可
 
 ## 11. 命令行用法（可选）
 
@@ -247,19 +251,23 @@ python mod_builder.py -p adamant -n 阿卡赛特 -c Akaset -l ja chs en -o .
 
 ## 12. 常见问题
 
-### 12.1 `ffmpeg` 找不到
+### 12.1 角色台词太单调想要个性一点
+
+在第一步：生成角色工程后手动修改`<角色代号>.lua`里的台词，根据其性格人设进行相应的修改，注意保证台词数量对应正确
+
+### 12.2 `ffmpeg` 找不到
 
 确认 `ffmpeg -version` 可执行，不行就重新配置 PATH。
 
-### 12.2 网页无法选择目录
+### 12.3 网页无法选择目录
 
 请使用最新版 Chrome/Edge，并允许页面访问本地目录。
 
-### 12.3 模型加载失败
+### 12.4 模型加载失败
 
 确认 GPT-SoVITS 已用 `runtime\python.exe api_v2.py` 启动，且路径是绝对路径。
 
-### 12.4 合成音色不稳定
+### 12.5 合成音色不稳定
 
 优先使用干净的 **WAV 参考音频**，并确保参考文本与音频内容一致。
 
@@ -269,3 +277,4 @@ python mod_builder.py -p adamant -n 阿卡赛特 -c Akaset -l ja chs en -o .
 
 `moetide.top` 是用于测试自定义角色包选择的网站。  
 感兴趣可以查看一下。
+
