@@ -174,13 +174,13 @@ ja_loc_adamant_male_a__guidance_correct_path_
 python boost_volume.py
 ```
 
-## 7.2 受击语音处理（wwise）
+## 7.2 受击语音处理（wwise）注意，该步骤不是必须，如果角色没有相应的音效则不用管
 
 在角色目录：
 
 `audio/wwise/events/player/play_xxx/<角色代号>/`
 
-放入受击音频后并且将语音增强文件夹下的rename_audio.py放到该目录，在这个目录下执行：
+放入受击音频后并且将语音增强文件夹下的rename_audio.py放到该目录，在这个目录下执行，执行完毕后根据终端对lua代码里的对应部分进行修改：
 
 ```powershell
 python rename_audio.py
